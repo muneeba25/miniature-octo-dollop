@@ -1,10 +1,10 @@
 #---
-# Excerpted from "Agile Web Development with Rails",
+# Excerpted from "Agile Web Development with Rails 5",
 # published by The Pragmatic Bookshelf.
 # Copyrights apply to this code. It may not be used to create training material,
 # courses, books, articles, and the like. Contact us if you are in doubt.
 # We make no guarantees that this code is fit for any purpose.
-# Visit http://www.pragmaticprogrammer.com/titles/rails4 for more book information.
+# Visit http://www.pragmaticprogrammer.com/titles/rails5 for more book information.
 #---
 class CartsController < ApplicationController
   before_action :set_cart, only: [:show, :edit, :update, :destroy]
@@ -37,9 +37,9 @@ class CartsController < ApplicationController
     respond_to do |format|
       if @cart.save
         format.html { redirect_to @cart, notice: 'Cart was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @cart }
+        format.json { render :show, status: :created, location: @cart }
       else
-        format.html { render action: 'new' }
+        format.html { render :new }
         format.json { render json: @cart.errors, status: :unprocessable_entity }
       end
     end
@@ -51,9 +51,9 @@ class CartsController < ApplicationController
     respond_to do |format|
       if @cart.update(cart_params)
         format.html { redirect_to @cart, notice: 'Cart was successfully updated.' }
-        format.json { head :no_content }
+        format.json { render :show, status: :ok, location: @cart }
       else
-        format.html { render action: 'edit' }
+        format.html { render :edit }
         format.json { render json: @cart.errors, status: :unprocessable_entity }
       end
     end
@@ -65,8 +65,7 @@ class CartsController < ApplicationController
     @cart.destroy if @cart.id == session[:cart_id]
     session[:cart_id] = nil
     respond_to do |format|
-      format.html { redirect_to store_url,
-        notice: 'Your cart is currently empty' }
+      format.html { redirect_to store_index_url }
       format.json { head :no_content }
     end
   end
@@ -81,10 +80,10 @@ class CartsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def cart_params
-      params[:cart]
+      params.fetch(:cart, {})
     end
     def invalid_cart
       logger.error "Attempt to access invalid cart #{params[:id]}"
-      redirect_to store_url, notice: 'Invalid cart'
+      redirect_to store_index_url, notice: 'Invalid cart'
     end
 end
